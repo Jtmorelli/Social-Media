@@ -41,31 +41,34 @@ def profile(request):
 def myfeed(request):
     comment_count_list = []
     like_count_list = []
-    posts = Post.objects.filter(username=request.user).order_by('-date_posted')
+    posts = Post.objects.filter(username=request.user).order_by("-date_posted")
+
     for p in posts:
         c_count = Comment.objects.filter(post=p).count()
         l_count = Like.objects.filter(post=p).count()
         comment_count_list.append(c_count)
         like_count_list.append(l_count)
-    zipped_lists = zip(posts,comment_count_list,like_count_list)
 
-    context = {'posts':posts, 'zipped_lists':zipped_lists}
-    return render(request, 'FeedApp/myfeed.html', context)
+    zipped_list = zip(posts, comment_count_list, like_count_list)
+    context = {"posts": posts, "zipped_list": zipped_list}
+    return render(request, "FeedApp/myfeed.html", context)
+
 
 @login_required
 def new_post(request):
-    if request.method != 'POST':
+    if request.method != "POST":
         form = PostForm()
     else:
-        form = PostForm(request.POST,request.FILES)
+        form = PostForm(request.POST, request.FILES)
+
         if form.is_valid():
-            new_post=form.save(commit=False)
+            new_post = form.save(commit=False)
             new_post.username = request.user
             new_post.save()
-            return redirect('FeedApp:myfeed')
+            return redirect("FeedApp:myfeed")
 
-    context = {'form':form}
-    return render(request, 'FeedApp/new_post.html', context)
+    context = {"form": form}
+    return render(request, "FeedApp/new_post.html", context)
 
 
 

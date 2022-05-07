@@ -89,10 +89,12 @@ def friendsfeed(request):
     if request.method == 'POST' and request.POST.get("like"):
         post_to_like = request.POST.get("like")
         print(post_to_like)
-        like_already_exists = Like.object.filter(post_id=post_to_like,username=request.user)
-        if not like_already_exists():
+        
+        like_already_exists = Like.objects.filter(post_id=post_to_like, username=request.user)
+        
+        if not like_already_exists.exists():
             Like.objects.create(post_id=post_to_like,username=request.user)
-            return redirect("FeedApp:frnsfeed")
+            return redirect("FeedApp:friendsfeed")
 
     context = {"posts": posts, "zipped_list": zipped_list}
     return render(request, "FeedApp/friendsfeed.html", context)
